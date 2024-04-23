@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Styled Form</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+         /* -----------------font_style */
+    .montserrat-400 {
+      font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+    }
+    .montserrat-600 {
+      font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 600;
+      font-style: normal;
+    }
+    /* -----------------font_style */
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url(../Images//index_background.jpg);
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+      }
+      .form_container{
+        margin-top: 0;
+        background-color: #fff;
+        width: 30%;
+        padding: 20px;
+        border-radius: 32px;
+      }
+
+     
+
+
+      
+     
+
+     
+
+     
+
+      /* Extra large devices (large laptops and desktops, 1200px and up) */
+      @media only screen and (min-width: 1200px) {
+        .container {
+          width: 40%;
+          
+        }
+      }
+
+       /* Large devices (laptops/desktops, 992px and up) */
+       @media only screen and (min-width: 992px) {
+        .container {
+          width: 40%;
+          
+        }
+      }
+
+       /* Medium devices (landscape tablets, 768px and up) */
+       @media only screen and (min-width: 768px) {
+        .form-label {
+          font-size: 0.9rem;
+          /* Decrease font size for smaller screens */
+        }
+
+        .container {
+          width: 40%;
+          
+        }
+      }
+
+       /* Small devices (portrait tablets and large phones, 600px and up) */
+       @media only screen and (min-width: 600px) {
+        .form-label {
+          font-size: 0.9rem;
+          /* Decrease font size for smaller screens */
+        }
+
+        .container {
+          width: 40%;
+         
+        }
+      }
+
+      /* Extra small devices (phones, 600px and down) */
+      @media only screen and (max-width: 600px) {
+        .form-label {
+          font-size: 0.9rem;
+          /* Decrease font size for smaller screens */
+        }
+
+        .container {
+          width: 90%;
+         
+        }
+      }
+
+      @media only screen and (max-width: 576px) {
+        .form_container{
+            width: 100%;
+            border-radius: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="montserrat-400">
+    <div class="container form_container" >
+      <p id="errorMessage" style="display: none; color: red; font-weight: 600">
+        Please Enter the Details
+      </p>
+      <div class="form-group">
+        <label for="exampleInputName1">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="inputFirstName"
+          aria-describedby="emailHelp"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Email Address</label>
+        <input
+          type="email"
+          class="form-control"
+          id="inputEmail"
+          aria-describedby="emailHelp"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPhone1">Phone Number</label>
+        <input
+          type="phone"
+          class="form-control"
+          id="inputPhoneNumber"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPlace1">Place</label>
+        <input type="text" class="form-control" id="inputPlace" required />
+      </div>
+      <button
+        type="submit"
+        class="btn"
+        style="background-color: #2d8f0f; color: #fff"
+        id="saveChangesBtn"
+      >
+        Submit
+      </button>
+    </div>
+  </body>
+  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js"></script>
+  <script type="module" src="../config/db.js"></script>
+  <script type="module" src="../js/form.js"></script>
+</html>
