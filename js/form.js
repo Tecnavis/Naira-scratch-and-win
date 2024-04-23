@@ -23,7 +23,7 @@ async function saveChanges() {
     const email = document.getElementById('inputEmail').value.trim();
     const place = document.getElementById('inputPlace').value.trim();
 
-    const uid = 'NTqIUsvcrtSj3zO9zdY9X4vUELf2';
+    const uid = 'fILKO1JZVMUotwKnxTml2jTTpfF2';
 
     if (!uid) {
         console.error('User not authenticated');

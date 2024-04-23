@@ -22,7 +22,7 @@ let winnerID, dateTime, prize;
 
 // Function to retrieve data from Firebase and initialize scratch card
 async function retrieveDataAndInitializeScratchCard() {
-    const uid = 'NTqIUsvcrtSj3zO9zdY9X4vUELf2';
+    const uid = 'fILKO1JZVMUotwKnxTml2jTTpfF2';
 
     if (!uid) {
         console.error('User not authenticated');
@@ -90,7 +90,7 @@ function initializeScratchCard(cardData) {
 }
 
 function updateCount(cardData) {
-    const uid = 'NTqIUsvcrtSj3zO9zdY9X4vUELf2';
+    const uid = 'fILKO1JZVMUotwKnxTml2jTTpfF2';
 
     // Reference to the "prizeList" collection
     const cardRef = collection(firestore, `users/${uid}/prizeList`);
