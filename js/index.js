@@ -10,6 +10,7 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-firestore.js";
 import { app } from '../config/db.js';
+import { userID } from '../globals/globals.js';
 
 let logoURL;
 
@@ -21,10 +22,10 @@ const firestore = getFirestore(app);
 
 
 async function displayDataInTable() {
-    const uid = 'fILKO1JZVMUotwKnxTml2jTTpfF2';
+    const uid = userID;
 
     if (!uid) {
-        console.error('User not authenticated');
+        // console.error('User not authenticated');
         return;
     }
 
@@ -45,7 +46,7 @@ async function displayDataInTable() {
             document.getElementById('displayCity').textContent = data.city
         });
     } catch (error) {
-        console.error('Error displaying data in table:', error);
+        // console.error('Error displaying data in table:', error);
     }
 }
 

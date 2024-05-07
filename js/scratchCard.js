@@ -12,7 +12,7 @@ import {
     where
 } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-firestore.js";
 import { app } from '../config/db.js';
-import { logoURL } from './index.js'
+import { userID } from '../globals/globals.js';
 
 const firestore = getFirestore(app);
 const timestamp = serverTimestamp()
@@ -22,10 +22,10 @@ let winnerID, dateTime, prize;
 
 // Function to retrieve data from Firebase and initialize scratch card
 async function retrieveDataAndInitializeScratchCard() {
-    const uid = 'fILKO1JZVMUotwKnxTml2jTTpfF2';
+    const uid = userID;
 
     if (!uid) {
-        console.error('User not authenticated');
+        // console.error('User not authenticated');
         return;
     }
 
@@ -53,13 +53,13 @@ async function retrieveDataAndInitializeScratchCard() {
                 initializeScratchCard(card);
             } else {
                 // If counts are not available, handle it accordingly (e.g., show a message).
-                console.log("No counts available for this card.");
+                // console.log("No counts available for this card.");
             }
         } else {
-            console.log("No scratch cards available for this user.");
+            // console.log("No scratch cards available for this user.");
         }
     } catch (error) {
-        console.error('Error retrieving data from Firebase:', error);
+        // console.error('Error retrieving data from Firebase:', error);
     }
 }
 
@@ -90,7 +90,7 @@ function initializeScratchCard(cardData) {
 }
 
 function updateCount(cardData) {
-    const uid = 'fILKO1JZVMUotwKnxTml2jTTpfF2';
+    const uid = userID;
 
     // Reference to the "prizeList" collection
     const cardRef = collection(firestore, `users/${uid}/prizeList`);
@@ -101,11 +101,11 @@ function updateCount(cardData) {
     getDocs(querys)
         .then(async (querySnapshot) => {
             querySnapshot.forEach(async (doc) => {
-                console.log(doc.id);
+                // console.log(doc.id);
                 await updateDoc(doc.ref, {
                     count: cardData.count - 1 // Decrease count by 1
                 }).then(async () => {
-                    console.log("Count updated successfully.");
+                    // console.log("Count updated successfully.");
 
                     // Get the phone number from localStorage
                     var number = localStorage.getItem('num');
@@ -114,7 +114,7 @@ function updateCount(cardData) {
                         window.location.href = './form.html'
                     }
 
-                    const winID = generateCustomId(number);
+                    const winID = await generateUniqueRandomId();
 
                     // Reference to the "table" collection
                     const tableRef = collection(firestore, `users/${uid}/table`);
@@ -130,9 +130,9 @@ function updateCount(cardData) {
                         await updateDoc(tableDoc.ref, {
                             // Add a new field to the document
                             winID: winID,
-                            prizeID: cardData.prizeID // newValue is the value you want to assign to the new field
+                            prizeName: cardData.prizeName // newValue is the value you want to assign to the new field
                         }).then(() => {
-                            console.log("New field added successfully to the table document.");
+                            // console.log("New field added successfully to the table document.");
                             document.getElementById('successMessage').style.display = 'block'
                             document.getElementById('winID').textContent = winID;
 
@@ -148,19 +148,18 @@ function updateCount(cardData) {
                             prize = cardData.prizeName;
                             dateTime = dateString + '  ' + timeString;
 
-                            // Auto Download Image
-                            autoDownload();
+                            document.getElementById('downloadImageBtn').style.display = 'block';
                         }).catch((error) => {
-                            console.error("Error adding new field to the table document: ", error);
+                            // console.error("Error adding new field to the table document: ", error);
                         });
                     });
                 }).catch((error) => {
-                    console.error("Error updating count: ", error);
+                    // console.error("Error updating count: ", error);
                 });
             });
         })
         .catch((error) => {
-            console.error("Error updating count: ", error);
+            // console.error("Error updating count: ", error);
         });
 }
 
@@ -169,22 +168,28 @@ function updateCount(cardData) {
 // Call the function to retrieve data from Firebase and initialize scratch card
 retrieveDataAndInitializeScratchCard();
 
-function generateCustomId(num) {
-    // Convert the number to a string
-    const numString = num.toString();
+async function generateUniqueRandomId() {
+    const uid = userID;
+    let isUnique = false;
+    let winID;
 
-    // Get the current date and time in the format YYYYMMDDHHMMSS
-    const now = new Date();
-    const timestamp = [
-        now.getFullYear(),
-        ('0' + (now.getMonth() + 1)).slice(-2),
-        ('0' + now.getDate()).slice(-2),
-    ].join('');
+    // Reference to the "table" collection
+    const tableRef = collection(firestore, `users/${uid}/table`);
 
-    // Combine the number and timestamp to create the ID
-    const customId = numString + timestamp;
+    while (!isUnique) {
+        // Generate a random 5-digit number
+        const randomNumber = Math.floor(10000 + Math.random() * 90000);
+        winID = randomNumber.toString();
 
-    return customId;
+        // Check if the generated ID already exists in the collection
+        const querySnapshot = await getDocs(query(tableRef, where('winID', '==', winID)));
+
+        if (querySnapshot.empty) {
+            isUnique = true;
+        }
+    }
+
+    return winID;
 }
 
 
@@ -204,7 +209,8 @@ function autoDownload() {
 
     // Load your main image
     const img = new Image();
-    img.src = '../congratulations.jpg'; // Replace with your image path 
+    img.src = '../congratulations.jpg'; // Replace with your image path
+
     img.onload = function () {
         // Draw your main image on canvas
         ctx.drawImage(img, 0, 0);
@@ -213,33 +219,42 @@ function autoDownload() {
         ctx.font = '100px Arial';
         ctx.fillStyle = 'black';
         ctx.fillText(prize, 800, 1550); // Adjust position as needed
-        ctx.fillText(winnerID, 500, 1700);
+        ctx.fillText('Winner ID: ' + winnerID, 650, 1700);
         ctx.fillText(dateTime, 600, 1850);
 
-        // Append canvas to document body
+        // Append canvas to document body (temporary for dataURL generation)
         document.body.appendChild(canvas);
 
         // Convert canvas to data URL
         const dataURL = canvas.toDataURL("image/png");
-
-        // Create a link element
         const link = document.createElement('a');
         link.href = dataURL;
         link.download = 'prize-details.png'; // Filename
 
-        // Trigger click event on the link to download the image
         link.click();
 
         // Remove canvas from document body
         document.body.removeChild(canvas);
 
-        const num = localStorage.getItem('num');
-        if (num) {
-            localStorage.removeItem('num');
-            // Redirect to index page
-            window.location.href = '../index.html'
-        }
+        // Call resetAndRedirect which will handle redirect now
+        resetAndRedirect();
     };
+}
+
+
+// Initiate download using the new function
+document.getElementById('downloadImageBtn').addEventListener('click', autoDownload);
+
+function resetAndRedirect() {
+    const num = localStorage.getItem('num');
+    if (num) {
+        localStorage.removeItem('num');
+
+        // Redirect to index page after a slight delay
+        setTimeout(() => {
+            window.location.href = '../index.html';
+        }, 10000); // Adjust delay if needed
+    }
 }
 
 
