@@ -24,7 +24,7 @@ let phoneNumber;
 
 // Initialize intlTelInput
 const iti = window.intlTelInput(input, {
-    initialCountry: "ae",
+    initialCountry: "qa",
     utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@22.0.2/build/js/utils.js",
 });
 
