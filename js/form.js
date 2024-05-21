@@ -79,6 +79,7 @@ async function saveChanges() {
     const place = document.getElementById('inputPlace').value.trim();
     const birthday = document.getElementById('birthday').value.trim();
     const nationality = document.getElementById('inputNationality').value.trim();
+    const purchaseAmount = document.getElementById('purchaseAmount').value.trim();
 
     if (!uid) {
         // console.error('User not authenticated');
@@ -86,7 +87,7 @@ async function saveChanges() {
     }
 
     // Validate inputs
-    if (validateInputs(firstName, email, place, birthday, nationality)) {
+    if (validateInputs(firstName, email, place, birthday, nationality, purchaseAmount)) {
         const dataToSave = {
             firstName: firstName,
             phoneNumber: phoneNumber,
@@ -94,6 +95,7 @@ async function saveChanges() {
             place: place,
             birthday: birthday,
             nationality: nationality,
+            purchaseAmount: purchaseAmount,
             date: date,
             time: time,
             timestamp: timestamp
@@ -104,6 +106,15 @@ async function saveChanges() {
         try {
             const docRef = await addDoc(userDocRef, dataToSave);
             localStorage.setItem('num', phoneNumber);
+            localStorage.setItem('purchase', purchaseAmount);
+
+            document.getElementById('inputFirstName').value = '';
+            document.getElementById('inputEmail').value = '';
+            document.getElementById('inputPlace').value = '';
+            document.getElementById('birthday').value = '';
+            document.getElementById('inputNationality').value = '';
+            document.getElementById('purchaseAmount').value = '';
+
             // console.log('Data successfully added to Firestore');
             window.location.href = '../pages/scratchCard.html';
         } catch (error) {
@@ -114,8 +125,8 @@ async function saveChanges() {
     }
 }
 
-function validateInputs(firstName, email, place, birthday, nationality) {
-    if (!firstName || !email || !place || !birthday || !nationality) {
+function validateInputs(firstName, email, place, birthday, nationality, purchaseAmount) {
+    if (!firstName || !email || !place || !birthday || !nationality || !purchaseAmount) {
         showError('Please fill in all required fields.');
         return false;
     }
