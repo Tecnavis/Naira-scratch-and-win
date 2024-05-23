@@ -289,7 +289,6 @@ async function retrieveDataAndInitializeScratchCard() {
     }
 
     try {
-        const purchaseAmount = localStorage.getItem('purchase');
         const userDocRef = collection(firestore, `users/${uid}/prizeList`);
         const querySnapshot = await getDocs(query(userDocRef, orderBy('timestamp', 'asc')));
 
@@ -299,7 +298,7 @@ async function retrieveDataAndInitializeScratchCard() {
             cardsData.push(data);
         });
 
-        let selectedPrize = selectPrizeBasedOnPurchase(purchaseAmount, cardsData);
+        const selectedPrize = selectRandomAvailablePrize(cardsData);
 
         if (selectedPrize) {
             initializeScratchCard(selectedPrize);
@@ -310,33 +309,14 @@ async function retrieveDataAndInitializeScratchCard() {
     }
 }
 
-function selectPrizeBasedOnPurchase(purchaseAmount, cardsData) {
-    let selectedPrize;
-
-    if (purchaseAmount > 5000) {
-        selectedPrize = selectRandomAvailablePrize(["1 GRAM COIN", "500 QAR", "100 QAR", "50 QAR"], cardsData);
-    } else if (purchaseAmount > 3000 && purchaseAmount < 5000) {
-        selectedPrize = selectRandomAvailablePrize(["1 GRAM COIN", "100 QAR", "50 QAR"], cardsData);
-    } else if (purchaseAmount > 1500 && purchaseAmount < 3000) {
-        selectedPrize = selectRandomAvailablePrize(["100 QAR", "50 QAR"], cardsData);
-    } else if (purchaseAmount > 500 && purchaseAmount < 1500) {
-        selectedPrize = selectRandomAvailablePrize(["50 QAR"], cardsData);
-    } else {
-        selectedPrize = selectRandomAvailablePrize(["0% MC SELECTED", "0% MC 40 GRAMS"], cardsData);
-    }
-
-    return selectedPrize;
-}
-
-function selectRandomAvailablePrize(prizeOptions, cardsData) {
-    const availablePrizes = cardsData.filter(card => prizeOptions.includes(card.prizeName) && card.count > 0);
+function selectRandomAvailablePrize(cardsData) {
+    const availablePrizes = cardsData.filter(card => card.count > 0);
     if (availablePrizes.length > 0) {
         const randomIndex = Math.floor(Math.random() * availablePrizes.length);
         return availablePrizes[randomIndex].prizeName;
     }
     return null;
 }
-
 
 
 // Function to initialize scratch card with data
@@ -492,29 +472,48 @@ function autoDownload() {
 
     // Load your main image
     const img = new Image();
-    img.src = '../congratulations-naira (1).jpg'; // Replace with your image path
+    img.src = '../congratulations-naira-.jpg'; // Replace with your image path
 
     img.onload = function () {
         // Draw your main image on canvas
         ctx.drawImage(img, 0, 0);
 
         // Add text
-        ctx.font = '100px Arial';
-        ctx.fillStyle = 'black';
+        ctx.font = '70px Arial';
+        ctx.fillStyle = 'grey';
+
+        let purchaseCriteria;
+
+        if (prize === '1 GRAM COIN') {
+            purchaseCriteria = 'Minimum 3000 QAR Purchase';
+        } else if (prize === '500 QAR') {
+            purchaseCriteria = 'Minimum 5000 QAR Purchase';
+        } else if (prize === '100 QAR') {
+            purchaseCriteria = 'Minimum 1500 QAR Purchase';
+        } else if (prize === '50 QAR') {
+            purchaseCriteria = 'Minimum 500 QAR Purchase';
+        } else if (prize === '0% MC SELECTED') {
+            purchaseCriteria = 'Zero Making Charge on Seleted Items';
+        } else if (prize === '0% MC 40 GRAMS') {
+            purchaseCriteria = 'Zero Making Charge upto 40 Grams';
+        }
 
         // Calculate text width for center alignment
         const prizeTextWidth = ctx.measureText(prize).width;
+        const purchaseCriteriaTextWidth = ctx.measureText(purchaseCriteria).width;
         const winnerIDTextWidth = ctx.measureText('Winner ID: ' + winnerID).width;
         const dateTimeTextWidth = ctx.measureText(dateTime).width;
 
         // Center align text horizontally
         const prizeX = (canvas.width - prizeTextWidth) / 2;
+        const purchaseCriteriaX = (canvas.width - purchaseCriteriaTextWidth) / 2;
         const winnerIDX = (canvas.width - winnerIDTextWidth) / 2;
         const dateTimeX = (canvas.width - dateTimeTextWidth) / 2;
 
-        ctx.fillText(prize, prizeX, 1550); // Adjust position as needed
-        ctx.fillText('Winner ID: ' + winnerID, winnerIDX, 1700);
-        ctx.fillText(dateTime, dateTimeX, 1850);
+        ctx.fillText(prize, prizeX, 1300); // Adjust position as needed
+        ctx.fillText(purchaseCriteria, purchaseCriteriaX, 1400);
+        ctx.fillText('Winner ID: ' + winnerID, winnerIDX, 1500);
+        ctx.fillText(dateTime, dateTimeX, 1650);
 
         // Append canvas to document body (temporary for dataURL generation)
         document.body.appendChild(canvas);

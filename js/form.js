@@ -82,21 +82,24 @@ async function saveChanges() {
     const place = document.getElementById('inputPlace').value.trim();
     const birthday = document.getElementById('birthday').value.trim();
     const nationality = document.getElementById('inputNationality').value.trim();
-    const purchaseAmount = document.getElementById('purchaseAmount').value.trim();
+    const phoneNumber = document.getElementById('inputPhoneNumber').value.trim(); // Add this line to retrieve phone number input
 
     if (!uid) {
         return Promise.reject('User not authenticated');
     }
 
     // Validate inputs
-    if (validateInputs(firstName, email, place, birthday, nationality, purchaseAmount)) {
+    if (validateInputs(firstName, email, place, birthday, nationality)) {
         const userDocRef = collection(firestore, `users/${uid}/table`);
 
         // Check if email or phone number already exists
-        const queryByEmailOrPhone = query(userDocRef, where("email", "==", email), where("phoneNumber", "==", phoneNumber));
-        const snapshotByEmailOrPhone = await getDocs(queryByEmailOrPhone);
+        const queryByEmail = query(userDocRef, where("email", "==", email));
+        const snapshotByEmail = await getDocs(queryByEmail);
 
-        if (!snapshotByEmailOrPhone.empty) {
+        const queryByPhone = query(userDocRef, where("phoneNumber", "==", phoneNumber));
+        const snapshotByPhone = await getDocs(queryByPhone);
+
+        if (!snapshotByEmail.empty || !snapshotByPhone.empty) {
             // Email or phone number already exists, show error
             showError('Email or phone number already exists. Please use different credentials.');
             return;
@@ -110,7 +113,6 @@ async function saveChanges() {
             place: place,
             birthday: birthday,
             nationality: nationality,
-            purchaseAmount: purchaseAmount,
             date: date,
             time: time,
             timestamp: timestamp
@@ -119,7 +121,6 @@ async function saveChanges() {
         try {
             const docRef = await addDoc(userDocRef, dataToSave);
             localStorage.setItem('num', phoneNumber);
-            localStorage.setItem('purchase', purchaseAmount);
 
             // Clear input fields
             document.getElementById('inputFirstName').value = '';
@@ -127,7 +128,7 @@ async function saveChanges() {
             document.getElementById('inputPlace').value = '';
             document.getElementById('birthday').value = '';
             document.getElementById('inputNationality').value = '';
-            document.getElementById('purchaseAmount').value = '';
+            document.getElementById('inputPhoneNumber').value = '';
 
             // Redirect to another page or show success message
             window.location.href = '../pages/scratchCard.html';
@@ -139,8 +140,8 @@ async function saveChanges() {
 }
 
 
-function validateInputs(firstName, email, place, birthday, nationality, purchaseAmount) {
-    if (!firstName || !email || !place || !birthday || !nationality || !purchaseAmount) {
+function validateInputs(firstName, email, place, birthday, nationality) {
+    if (!firstName || !email || !place || !birthday || !nationality) {
         showError('Please fill in all required fields.');
         return false;
     }
