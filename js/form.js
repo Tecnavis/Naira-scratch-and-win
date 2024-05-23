@@ -2,6 +2,9 @@ import {
     getFirestore,
     collection,
     addDoc,
+    query,
+    where,
+    getDocs,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-firestore.js";
 import { app } from '../config/db.js';
@@ -82,12 +85,24 @@ async function saveChanges() {
     const purchaseAmount = document.getElementById('purchaseAmount').value.trim();
 
     if (!uid) {
-        // console.error('User not authenticated');
         return Promise.reject('User not authenticated');
     }
 
     // Validate inputs
     if (validateInputs(firstName, email, place, birthday, nationality, purchaseAmount)) {
+        const userDocRef = collection(firestore, `users/${uid}/table`);
+
+        // Check if email or phone number already exists
+        const queryByEmailOrPhone = query(userDocRef, where("email", "==", email), where("phoneNumber", "==", phoneNumber));
+        const snapshotByEmailOrPhone = await getDocs(queryByEmailOrPhone);
+
+        if (!snapshotByEmailOrPhone.empty) {
+            // Email or phone number already exists, show error
+            showError('Email or phone number already exists. Please use different credentials.');
+            return;
+        }
+
+        // No existing email or phone number found, proceed to save data
         const dataToSave = {
             firstName: firstName,
             phoneNumber: phoneNumber,
@@ -101,13 +116,12 @@ async function saveChanges() {
             timestamp: timestamp
         };
 
-        const userDocRef = collection(firestore, `users/${uid}/table`);
-
         try {
             const docRef = await addDoc(userDocRef, dataToSave);
             localStorage.setItem('num', phoneNumber);
             localStorage.setItem('purchase', purchaseAmount);
 
+            // Clear input fields
             document.getElementById('inputFirstName').value = '';
             document.getElementById('inputEmail').value = '';
             document.getElementById('inputPlace').value = '';
@@ -115,15 +129,15 @@ async function saveChanges() {
             document.getElementById('inputNationality').value = '';
             document.getElementById('purchaseAmount').value = '';
 
-            // console.log('Data successfully added to Firestore');
+            // Redirect to another page or show success message
             window.location.href = '../pages/scratchCard.html';
         } catch (error) {
-            // console.error('Error adding data to Firestore: ', error);
             // Show error message to user
             showError('Error adding data to Firestore. Please try again later.');
         }
     }
 }
+
 
 function validateInputs(firstName, email, place, birthday, nationality, purchaseAmount) {
     if (!firstName || !email || !place || !birthday || !nationality || !purchaseAmount) {
