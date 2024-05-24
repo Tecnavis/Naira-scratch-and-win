@@ -321,7 +321,26 @@ function selectRandomAvailablePrize(cardsData) {
 
 // Function to initialize scratch card with data
 function initializeScratchCard(data) {
-    console.log(data);
+    // console.log(data);
+    let purchaseCriteria;
+    let prize = data
+
+    if (prize === '1 GRAM COIN') {
+        purchaseCriteria = 'Minimum 3000 QAR Purchase';
+    } else if (prize === '500 QAR') {
+        purchaseCriteria = 'Minimum 5000 QAR Purchase';
+    } else if (prize === '100 QAR') {
+        purchaseCriteria = 'Minimum 1500 QAR Purchase';
+    } else if (prize === '50 QAR') {
+        purchaseCriteria = 'Minimum 500 QAR Purchase';
+    } else if (prize === '0% MC SELECTED') {
+        purchaseCriteria = 'Zero Making Charge on Seleted Items';
+    } else if (prize === '0% MC 40 GRAMS') {
+        purchaseCriteria = 'Zero Making Charge upto 40 Grams';
+    }
+
+    // console.log("New field added successfully to the table document.");
+    document.getElementById('condition').textContent = purchaseCriteria;
     // Define a variable to store a reference to the timeout
     let scratchMoveTimeout;
 
@@ -377,7 +396,7 @@ function updateCount(cardData) {
                     }
 
                     const winID = await generateUniqueRandomId();
-                    console.log(winID);
+                    // console.log(winID);
 
                     // Reference to the "table" collection
                     const tableRef = collection(firestore, `users/${uid}/table`);
@@ -395,7 +414,6 @@ function updateCount(cardData) {
                             winID: winID,
                             prizeName: cardData.prizeName // newValue is the value you want to assign to the new field
                         }).then(() => {
-                            // console.log("New field added successfully to the table document.");
                             document.getElementById('successMessage').style.display = 'block'
                             document.getElementById('winID').textContent = winID;
 

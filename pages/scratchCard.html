@@ -39,10 +39,38 @@
       background-color: var(--hover-color);
     }
 
+    .terms-and-conditions p {
+      color: #fff;
+      font-size: 22px;
+    }
+
+    .terms-and-conditions ul {
+      margin-left: 50px;
+      margin-top: 15px;
+      color: rgb(48, 48, 48);
+      font-size: 20px;
+    }
+
     /* Extra small devices (phones, 600px and down) */
     @media only screen and (max-width: 600px) {
       .container div:first-child {
         margin: 25px;
+      }
+
+      .terms-and-conditions{
+        padding: 20px;
+      }
+
+      .terms-and-conditions p {
+        color: #fff;
+        font-size: 16px;
+      }
+
+      .terms-and-conditions ul {
+        margin-left: 30px;
+        margin-top: 15px;
+        color: rgb(48, 48, 48);
+        font-size: 14px;
       }
     }
   </style>
@@ -51,6 +79,15 @@
 <body>
   <div id="container" style="display: flex; flex-direction: column">
     <div id="card"></div>
+    <div class="terms-and-conditions">
+      <p>Terms & Conditions</p>
+      <ul>
+        <li id="condition"></li>
+        <li>Customers are required to claim their prizes within a 2-month period</li>
+        <li>This voucher can be available at any of our store</li>
+        <li>Najma Street | Birkath Al Awameer | Safari Hyper Market Salwa Road</li>
+      </ul>
+    </div>
     <div style="
           display: flex;
           flex-direction: column;
@@ -63,7 +100,7 @@
         You Won
       </h2>
       <h3 id="winID"></h3>
-      <button id="downloadImageBtn" style="display: none;" class="enroll_btn">Download Image</button>
+      <button id="downloadImageBtn" style="display: none;" class="enroll_btn">Claim Reward</button>
     </div>
   </div>
 </body>
